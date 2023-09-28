@@ -6,6 +6,10 @@ Raw/Preprocessed Data -> Model Building -> Decision Augmentation
 
 Looks to augment fairkit-learn (https://github.com/INSPIRED-GMU/fairkit-learn) (Johnson & Brun, 2002) and AI Fairness 360 (Bellamy et al., 2018), which predominantly focus on helping to optimise models on both performance metrics and certain metrics.
 
+## Installation
+Run the following to install:
+   `pip install ethically`
+
 ## Raw/Preprocessed Data 
 
 NOTE: could make this compatible with Tensorflow Datasets object. Can also create a datasets object, which is compatible with Tensorflow Datasets object.

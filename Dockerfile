@@ -1,8 +1,9 @@
 FROM python:latest as base
 COPY setup.py .
 COPY requirements.txt .
-RUN pip install -r requirements.txt
 RUN pip install .
+RUN pip install -r requirements.txt
+COPY src /app/src
 
 FROM base as dev
 COPY requirements-dev.txt .
