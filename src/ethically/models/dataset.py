@@ -1,13 +1,11 @@
 from ethically.models.report import Report, EthicsReport
-from pandas import DataFrame
 from pydantic import BaseModel
 from typing import Any
 
 class Dataset(BaseModel):
-    filepath: str | None
-    data: Any
-    raw: DataFrame
+    data: Any = None
     reports: list[Report] = []
+
 
     def is_ethical(cols:list[str]) -> bool:
         pass

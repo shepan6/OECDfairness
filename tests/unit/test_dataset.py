@@ -1,22 +1,23 @@
 import pytest
-from ethically import Dataset
+import pandas as pd
+from ethically.models.dataset import Dataset
 
 @pytest.mark.parametrize(
     "args",
     [
         pytest.param(
             {
-                "filepath": "temp/file/path",
-                "predictor": ["predictor"]
+                "predictor": ["is_nice_person"]
             },
-            id="from_filepath"
+            id="from_pandas.DataFrame"
         )
     ]
 )
-def test_that_dataset_is_loaded(args: dict) -> None:
+def test_that_dataset_is_loaded(create_tmp_file, args: dict) -> None:
     
+    args["data"] = pd.read_csv(create_tmp_file)
     dataset = Dataset(**args)
-    assert len(dataset.raw) > 0
+    assert dataset.data is not None
 
 def test_that_dataset_loading_raises_exceptions():
     pass

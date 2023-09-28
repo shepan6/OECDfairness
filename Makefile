@@ -8,9 +8,8 @@ dev:
 	@docker build . -t ethic-ai && \
 	docker run -it --rm \
 		--name ethic-ai-dev \
-		-v $(SRC_DIR):/app/src \
-		-v $(TEST_DIR):/app/tests \
-		-w /app \
+		-v $(SRC_DIR):/src \
+		-v $(TEST_DIR):/tests \
 		ethic-ai bash
 
 stop-dev:
