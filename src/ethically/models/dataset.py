@@ -1,18 +1,17 @@
 # from ethically.models.report import Report, EthicsReport
-from ethically.models.measure import Metric
-from ethically.models.measure.representative import DatasetDivergenceMetric
+from ethically.models.measure.metric import Metric, Metrics, DatasetDivergenceMetric
 from pydantic import BaseModel
 from typing import Any
 
 
 class Dataset(BaseModel):
     data: Any = None
-    measures: list[Metric] = []
+    measures: Metrics = Metrics()
 
-    def measure(self, metrics:list[str]) -> None:
-        self.measures += [{
-            "dataset-divergence": DatasetDivergenceMetric()
-        }[metric]._compute() for metric in metrics]
+    def measure(self, metric_names: list[str] = []) -> None:
+        # NOTE: passing over dataset object to metric compute??
+        # NOTE: Get to such a way that we do not need to compute then append?
+        self.measures.compute_metrics_from_metric_names(metric_names=metric_names)
 
     def is_ethical(cols: list[str]) -> bool:
         pass
