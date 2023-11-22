@@ -1,5 +1,5 @@
-import pytest
 import pandas as pd
+import pytest
 
 
 def example_data() -> pd.DataFrame:
@@ -8,7 +8,7 @@ def example_data() -> pd.DataFrame:
             {"age": 10, "sex": "male", "is_nice_person": True},
             {"age": 55, "sex": "male", "is_nice_person": False},
             {"age": 42, "sex": "female", "is_nice_person": True},
-            {"age": 20, "sex": "female", "is_nice_person": False},
+            {"age": 20, "sex": "female", "is_nice_person": True},
         ]
     )
 

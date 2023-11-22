@@ -27,3 +27,4 @@ The relevance to the modelling step is to assign trust to generalisation perform
 ## References
 Barbedo, J. G. (2022). Deep learning applied to plant pathology: the problem of data representativeness. Tropical Plant Pathology, 47(1), 85-94.
 Schat, E., van de Schoot, R., Kouw, W. M., Veen, D., & Mendrik, A. M. (2020). The data representativeness criterion: Predicting the performance of supervised classification based on data set similarity. Plos one, 15(8), e0237009.
+https://pair.withgoogle.com/explorables/measuring-diversity/
