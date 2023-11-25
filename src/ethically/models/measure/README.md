@@ -14,6 +14,11 @@ The relevance to the modelling step is to assign trust to generalisation perform
 
 
 ### Proposed metrics
+
+From OECD.AI Catalogue of Tools & Metrics for Trustworthy AI: https://oecd.ai/en/catalogue/metrics?terms=&page=1
+- Conditional Demographic Disparity (CDD): the difference in probabilities of disadvantage sub-group with respect to "positive" and "negative" predictor.
+-  
+
 - Dataset divergence:
     - To measure average KL divergence between k train/test splits. 
     We expect that higher average KL divergence between train/test splits would mean greater distances between train/test splits on average (which could lead to poor generalisation performance, BUT higher data variation [which could signal representativeness]).

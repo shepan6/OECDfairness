@@ -6,16 +6,10 @@ import pandas as pd
 import pytest
 
 from ethically import measure
-from ethically.models.dataset import Dataset
 
 
-def test_that_conditional_demographic_disparity_is_computed(create_tmp_file):
-    dataset = Dataset(
-        **{
-            "predictor": "is_nice_person",
-            "data": pd.read_csv(create_tmp_file),
-        }
-    )
+def test_that_conditional_demographic_disparity_is_computed(example_dataset):
+    dataset = example_dataset
     metric: dict = {
         "name": "conditional-demographic-disparity",
         "feature": "sex",
@@ -39,3 +33,7 @@ def test_that_conditional_demographic_disparity_is_computed(create_tmp_file):
         },
     )
     assert not diff
+
+def test_that_conditional_demographic_disparity_throws_exceptions(example_dataset):
+    dataset = example_dataset
+    pass
