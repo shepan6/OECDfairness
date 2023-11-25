@@ -6,6 +6,10 @@ import pandas as pd
 import pytest
 
 from ethically import measure
+from ethically.models.exceptions import (
+    FeatureNotInDataset,
+    FeatureSubCategoryNotInDataset,
+)
 
 
 def test_that_conditional_demographic_disparity_is_computed(example_dataset):
@@ -34,6 +38,34 @@ def test_that_conditional_demographic_disparity_is_computed(example_dataset):
     )
     assert not diff
 
-def test_that_conditional_demographic_disparity_throws_exceptions(example_dataset):
+
+@pytest.mark.parametrize(
+    "metric_payload,expected_exception",
+    [
+        pytest.param(
+            {
+                "name": "conditional-demographic-disparity",
+                "feature": "not-in-data",
+                "disadvantaged": "female",
+            },
+            FeatureNotInDataset,
+            id="feature-not-in-dataset",
+        ),
+        pytest.param(
+            {
+                "name": "conditional-demographic-disparity",
+                "feature": "sex",
+                "disadvantaged": "not-in-data",
+            },
+            FeatureSubCategoryNotInDataset,
+            id="feature-subcategory-not-in-dataset",
+        ),
+    ],
+)
+def test_that_conditional_demographic_disparity_throws_exceptions(
+    example_dataset, metric_payload, expected_exception
+):
     dataset = example_dataset
-    pass
+
+    with pytest.raises(expected_exception) as e_info:
+        measure(dataset=dataset, metrics=[metric_payload])

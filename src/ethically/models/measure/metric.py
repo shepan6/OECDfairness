@@ -8,6 +8,10 @@ from sklearn.model_selection import KFold
 from typing_extensions import Annotated
 
 from ethically.models.dataset import Dataset
+from ethically.models.exceptions import (
+    FeatureNotInDataset,
+    FeatureSubCategoryNotInDataset,
+)
 
 
 class BaseMetric(BaseModel):
@@ -44,9 +48,15 @@ class ConditionalDemographicDisparityMetric(BaseMetric):
         logging.info("Computing diverse-uniformity Divergence...")
         data = dataset.data
 
+        if self.feature not in data.columns:
+            raise FeatureNotInDataset()
+        unique_feature_values = data.loc[:, self.feature].unique()
+        if self.disadvantaged not in unique_feature_values:
+            raise FeatureSubCategoryNotInDataset()
+
         data[dataset.predictor] = data[dataset.predictor].astype(int)
         mapping = self._generate_disadvantaged_mapping(
-            unique_feature_values=data.loc[:, self.feature].unique()
+            unique_feature_values=unique_feature_values
         )
         data["disadvantaged"] = data.loc[:, self.feature].map(mapping)
         grouped = data.groupby(["disadvantaged", dataset.predictor]).count()
