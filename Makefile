@@ -5,7 +5,7 @@ TEST_DIR := $(shell pwd)/tests
 .PHONY: dev
 
 dev:
-	@docker build . -t ethic-ai && \
+	@docker build . --target dev -t ethic-ai && \
 	docker run -it --rm \
 		--name ethic-ai-dev \
 		-v $(SRC_DIR):/src \
