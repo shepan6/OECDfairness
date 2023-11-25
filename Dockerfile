@@ -10,4 +10,4 @@ FROM base as dev
 COPY requirements-dev.txt .
 RUN pip install -r requirements-dev.txt
 COPY scripts /scripts
-CMD ["pip" "install" "-e" "."]
+RUN pip install -e .
