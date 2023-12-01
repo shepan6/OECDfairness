@@ -127,9 +127,14 @@ class HellingerDistance(BaseMetric):
 
         feature_counts["dataset"] =  self._compute_square_root_probs(Counter(dataset.data.loc[:, self.feature].values))
         feature_counts["comparison_dataset"] =  self._compute_square_root_probs(Counter(self.comparison_dataset.data.loc[:, self.feature].values))
-        print(feature_counts)
-
-        self.value = float(value)
+        
+        distance: float = 0.0
+        for f in feature_counts["dataset"]:
+            distance += (feature_counts["dataset"][f] - feature_counts["dataset"][f])
+        
+        distance = 1/sqrt(2)*sqrt(distance)
+        print(distance)
+        self.value = distance
 
     @staticmethod
     def _compute_square_root_probs(counts: Counter) -> dict[str, float]:
