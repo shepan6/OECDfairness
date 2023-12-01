@@ -87,6 +87,7 @@ def test_that_hellinger_distance_is_computed(example_dataset):
         )
     }
     result = measure(dataset=dataset, metrics=[metric])
+    print(result)
     assert len(result) == 1
     diff = deepdiff.DeepDiff(
         result[0].model_dump(),
@@ -110,7 +111,7 @@ def test_that_hellinger_distance_is_computed(example_dataset):
                 "Govern",
                 "Treat"
             ],
-            "value": (1/sqrt(2))*sqrt((sqrt(0.5) - sqrt(1/3))**2 + (sqrt(0.5) - sqrt(2/3))**2),
+            "value": (1/sqrt(2))*(sqrt((sqrt(0.5) - sqrt(1/3))**2 + (sqrt(0.5) - sqrt(2/3))**2)),
         },
     )
     assert not diff

@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field, RootModel, TypeAdapter, Discriminator, Ta
 from pydantic.types import PositiveInt
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import KFold
-from typing_extensions import Annotated
+from typing import Annotated
 
 from ethically.models.dataset import Dataset
 from ethically.models.exceptions import (
@@ -158,7 +158,6 @@ class HellingerDistance(BaseMetric):
 def get_discriminator_value(v: Any) -> str:
     return v.get('name')
 
-
 class Metric(BaseModel):
     metric: Annotated[
         Union[
@@ -168,6 +167,10 @@ class Metric(BaseModel):
         Discriminator(get_discriminator_value),
     ]
 
+ALL_METRICS = Union[HellingerDistance, ConditionalDemographicDisparity]
+
+Metric = Annotated[ALL_METRICS, Field(discriminator="name")]
+metric_adapter: TypeAdapter[ALL_METRICS] = TypeAdapter(Metric)
 
 class Metrics(RootModel):
     root: list[Metric] = []
