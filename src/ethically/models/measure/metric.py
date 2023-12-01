@@ -170,6 +170,7 @@ class Metric(BaseModel):
 ALL_METRICS = Union[HellingerDistance, ConditionalDemographicDisparity]
 
 Metric = Annotated[ALL_METRICS, Field(discriminator="name")]
+# NOTE: solution taken from https://github.com/pydantic/pydantic/discussions/4950#discussioncomment-6462134
 metric_adapter: TypeAdapter[ALL_METRICS] = TypeAdapter(Metric)
 
 class Metrics(RootModel):
