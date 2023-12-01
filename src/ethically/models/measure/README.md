@@ -16,8 +16,8 @@ The relevance to the modelling step is to assign trust to generalisation perform
 ### Proposed metrics
 
 From OECD.AI Catalogue of Tools & Metrics for Trustworthy AI: https://oecd.ai/en/catalogue/metrics?terms=&page=1
-- Conditional Demographic Disparity (CDD): the difference in probabilities of disadvantage sub-group with respect to "positive" and "negative" predictor.
--  
+- Conditional Demographic Disparity (CDD): the difference in probabilities of disadvantage sub-group with respect to "positive" and "negative" predictor. (formula taken from https://docs.aws.amazon.com/sagemaker/latest/dg/clarify-data-bias-metric-cddl.html)
+-  Hellinger Distance: quantifies the degree of similarity between two probability distributions. It is the probabilistic analog of Euclidean distance.
 
 - Dataset divergence:
     - To measure average KL divergence between k train/test splits. 

@@ -1,8 +1,11 @@
 import logging
 from typing import Any, Literal, Union
+from math import sqrt
 
+from collections import Counter
 import numpy as np
-from pydantic import BaseModel, Field, RootModel
+from pydantic import BaseModel, Field, RootModel, TypeAdapter, Discriminator, Tag
+from pydantic.types import PositiveInt
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import KFold
 from typing_extensions import Annotated
@@ -15,7 +18,7 @@ from ethically.models.exceptions import (
 
 
 class BaseMetric(BaseModel):
-    name: str
+    name: str = Field(...)
     objective: str
     lifecycle_stages: list[str]
     purpose: list[str]
@@ -28,7 +31,7 @@ class BaseMetric(BaseModel):
         )
 
 
-class ConditionalDemographicDisparityMetric(BaseMetric):
+class ConditionalDemographicDisparity(BaseMetric):
     name: Literal[
         "conditional-demographic-disparity"
     ] = "conditional-demographic-disparity"
@@ -92,10 +95,73 @@ class ConditionalDemographicDisparityMetric(BaseMetric):
 
         return mapping
 
+class HellingerDistance(BaseMetric):
+    name: Literal["hellinger-distance"] = "hellinger-distance"
+    objective: str = "fairness"
+    lifecycle_stages: list[str] = [
+        "Operate & monitor",
+        "Verify & validate",
+        "Build & interpret model"
+    ]
+    purpose: list[str] = [
+        "Event/anomaly detection"
+        "Forecasting/prediction",
+        "Reasoning with knowledge structures/planning",
+        "Recognition/object detection",
+    ]
+    risk_management_stage: list[str] = [
+        "Define",
+        "Assess",
+        "Govern",
+        "Treat"
+    ]
+    feature: str
+    comparison_dataset: Dataset
 
-Metric = Annotated[
-    Union[ConditionalDemographicDisparityMetric], Field(discriminator="name")
-]
+    def _compute(self, dataset: Dataset = None) -> None:
+        # Applied to each feature
+        logging.info("Computing diverse-uniformity Divergence...")
+        data = dataset.data
+
+        feature_counts = {}
+
+        feature_counts["dataset"] =  self._compute_square_root_probs(Counter(dataset.data.loc[:, self.feature].values))
+        feature_counts["comparison_dataset"] =  self._compute_square_root_probs(Counter(self.comparison_dataset.data.loc[:, self.feature].values))
+        print(feature_counts)
+
+        self.value = float(value)
+
+    @staticmethod
+    def _compute_square_root_probs(counts: Counter) -> dict[str, float]:
+        
+        count_sum: PositiveInt = counts.total()
+        counts: dict[str, float] = dict(counts)
+        for key in counts.keys():
+            counts[key] = sqrt(counts[key]/count_sum)
+
+        return counts
+
+# # TODO: Resolve typing.Union Error from adding HellingerDistance to Union
+# https://docs.pydantic.dev/latest/concepts/unions/#discriminated-unions
+# Do I have to store the discrimation union in a class
+# Metric = Annotated[
+#     Union[HellingerDistance, ConditionalDemographicDisparity],
+#     Field(discriminator='name')
+# ]
+
+
+def get_discriminator_value(v: Any) -> str:
+    return v.get('name')
+
+
+class Metric(BaseModel):
+    metric: Annotated[
+        Union[
+            Annotated[HellingerDistance, Tag('hellinger-distance')],
+            Annotated[ConditionalDemographicDisparity, Tag('conditional-demographic-disparity')],
+        ],
+        Discriminator(get_discriminator_value),
+    ]
 
 
 class Metrics(RootModel):
