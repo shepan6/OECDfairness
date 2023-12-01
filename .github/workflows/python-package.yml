@@ -35,4 +35,4 @@ jobs:
         sh scripts/lint.sh
     - name: Test with pytest
       run: |
-        pytest
+        pytest tests
