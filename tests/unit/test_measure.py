@@ -77,17 +77,19 @@ def test_that_hellinger_distance_is_computed(example_dataset):
     metric: dict = {
         "name": "hellinger-distance",
         "feature": "sex",
-        "comparison_dataset": Dataset(
-            data=pd.DataFrame([
-                {"sex": "male", "pred": 0},
-                {"sex": "female", "pred": 1},
-                {"sex": "female", "pred": 0}
-            ]),
-            predictor="pred"
-        )
+        "comparison_dataset": {
+            "data": pd.DataFrame(
+                [
+                    {"sex": "male", "pred": 0},
+                    {"sex": "female", "pred": 1},
+                    {"sex": "female", "pred": 0},
+                ]
+            ),
+            "predictor": "pred",
+            "version": "1.0",
+        },
     }
     result = measure(dataset=dataset, metrics=[metric])
-    print(result)
     assert len(result) == 1
     diff = deepdiff.DeepDiff(
         result[0].model_dump(),
@@ -97,21 +99,21 @@ def test_that_hellinger_distance_is_computed(example_dataset):
             "lifecycle_stages": [
                 "Operate & monitor",
                 "Verify & validate",
-                "Build & interpret model"
+                "Build & interpret model",
             ],
             "purpose": [
-                "Event/anomaly detection"
-                "Forecasting/prediction",
+                "Event/anomaly detection" "Forecasting/prediction",
                 "Reasoning with knowledge structures/planning",
                 "Recognition/object detection",
             ],
-            "risk_management_stage": [
-                "Define",
-                "Assess",
-                "Govern",
-                "Treat"
-            ],
-            "value": (1/sqrt(2))*(sqrt((sqrt(0.5) - sqrt(1/3))**2 + (sqrt(0.5) - sqrt(2/3))**2)),
+            "risk_management_stage": ["Define", "Assess", "Govern", "Treat"],
+            "value": (1 / sqrt(2))
+            * (
+                sqrt(
+                    (sqrt(0.5) - sqrt(1 / 3)) ** 2
+                    + (sqrt(0.5) - sqrt(2 / 3)) ** 2
+                )
+            ),
         },
     )
     assert not diff

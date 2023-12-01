@@ -1,7 +1,13 @@
 import logging
 
 from ethically.models.dataset import Dataset
-from ethically.models.measure.metric import Metric, Metrics, BaseMetric, metric_adapter
+from ethically.models.measure.metric import (
+    BaseMetric,
+    Metric,
+    Metrics,
+    metric_adapter,
+)
+
 
 def measure(dataset: Dataset, metrics: list[dict]) -> Metrics:
     new_metrics: Metrics = Metrics()

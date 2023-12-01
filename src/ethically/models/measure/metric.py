@@ -1,14 +1,20 @@
 import logging
-from typing import Any, Literal, Union
-from math import sqrt
-
 from collections import Counter
+from math import sqrt
+from typing import Annotated, Any, Literal, Union
+
 import numpy as np
-from pydantic import BaseModel, Field, RootModel, TypeAdapter, Discriminator, Tag
+from pydantic import (
+    BaseModel,
+    Discriminator,
+    Field,
+    RootModel,
+    Tag,
+    TypeAdapter,
+)
 from pydantic.types import PositiveInt
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import KFold
-from typing import Annotated
 
 from ethically.models.dataset import Dataset
 from ethically.models.exceptions import (
@@ -95,26 +101,21 @@ class ConditionalDemographicDisparity(BaseMetric):
 
         return mapping
 
+
 class HellingerDistance(BaseMetric):
     name: Literal["hellinger-distance"] = "hellinger-distance"
     objective: str = "fairness"
     lifecycle_stages: list[str] = [
         "Operate & monitor",
         "Verify & validate",
-        "Build & interpret model"
+        "Build & interpret model",
     ]
     purpose: list[str] = [
-        "Event/anomaly detection"
-        "Forecasting/prediction",
+        "Event/anomaly detection" "Forecasting/prediction",
         "Reasoning with knowledge structures/planning",
         "Recognition/object detection",
     ]
-    risk_management_stage: list[str] = [
-        "Define",
-        "Assess",
-        "Govern",
-        "Treat"
-    ]
+    risk_management_stage: list[str] = ["Define", "Assess", "Govern", "Treat"]
     feature: str
     comparison_dataset: Dataset
 
@@ -125,53 +126,42 @@ class HellingerDistance(BaseMetric):
 
         feature_counts = {}
 
-        feature_counts["dataset"] =  self._compute_square_root_probs(Counter(dataset.data.loc[:, self.feature].values))
-        feature_counts["comparison_dataset"] =  self._compute_square_root_probs(Counter(self.comparison_dataset.data.loc[:, self.feature].values))
-        
+        feature_counts["dataset"] = self._compute_square_root_probs(
+            Counter(dataset.data.loc[:, self.feature].values)
+        )
+        feature_counts[
+            "comparison_dataset"
+        ] = self._compute_square_root_probs(
+            Counter(self.comparison_dataset.data.loc[:, self.feature].values)
+        )
+
         distance: float = 0.0
         for f in feature_counts["dataset"]:
-            distance += (feature_counts["dataset"][f] - feature_counts["dataset"][f])
-        
-        distance = 1/sqrt(2)*sqrt(distance)
-        print(distance)
+            distance += (
+                sqrt(feature_counts["dataset"][f])
+                - sqrt(feature_counts["comparison_dataset"][f])
+            ) ** 2
+
+        distance = 1 / sqrt(2) * sqrt(distance)
         self.value = distance
 
     @staticmethod
     def _compute_square_root_probs(counts: Counter) -> dict[str, float]:
-        
         count_sum: PositiveInt = counts.total()
         counts: dict[str, float] = dict(counts)
         for key in counts.keys():
-            counts[key] = sqrt(counts[key]/count_sum)
+            counts[key] = counts[key] / count_sum
 
         return counts
 
-# # TODO: Resolve typing.Union Error from adding HellingerDistance to Union
-# https://docs.pydantic.dev/latest/concepts/unions/#discriminated-unions
-# Do I have to store the discrimation union in a class
-# Metric = Annotated[
-#     Union[HellingerDistance, ConditionalDemographicDisparity],
-#     Field(discriminator='name')
-# ]
-
-
-def get_discriminator_value(v: Any) -> str:
-    return v.get('name')
-
-class Metric(BaseModel):
-    metric: Annotated[
-        Union[
-            Annotated[HellingerDistance, Tag('hellinger-distance')],
-            Annotated[ConditionalDemographicDisparity, Tag('conditional-demographic-disparity')],
-        ],
-        Discriminator(get_discriminator_value),
-    ]
 
 ALL_METRICS = Union[HellingerDistance, ConditionalDemographicDisparity]
 
 Metric = Annotated[ALL_METRICS, Field(discriminator="name")]
 # NOTE: solution taken from https://github.com/pydantic/pydantic/discussions/4950#discussioncomment-6462134
+# TODO: move this to the Metrics model
 metric_adapter: TypeAdapter[ALL_METRICS] = TypeAdapter(Metric)
+
 
 class Metrics(RootModel):
     root: list[Metric] = []
